@@ -20,17 +20,32 @@ $(document).ready( function() {
         workbook.fromJSON(json);  
         workbook.setActiveSheet("Лист1");  
     } 
+    function ExportFile(fileName) {
+        var json = JSON.stringify(workbook.toJSON());  
+        excelIO.save(json, function (blob) {  
+            saveAs(blob, fileName);  
+        }, function (e) {  
+            if (e.errorCode === 1) {  
+                alert(e.errorMessage);  
+            }  
+        });  
+    }
     changeData = function() {
         var sheet = workbook.getActiveSheet();
         sheet.setValue(1, 1, "blalb");
-        console.log("change");
     }
 
     $("#importUrl").focusout( function () {
         ImportFile();
         LoadSpread();
-        setTimeout(changeData, 3000);
+        setTimeout(changeData, 1000);
+        $('#ready').prop('disabled', false);
+    })
 
+    $("#ready").click( function() {
+        fileName = $("#importUrl").val();
+        fileName = fileName.replace('./', '');
+        ExportFile(fileName);
     })
  
 })
