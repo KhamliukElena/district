@@ -16,7 +16,7 @@ $(document).ready( function() {
         oReq.send(null);  
     }
     function LoadSpread(json) {  
-        jsonData = json;  
+        jsonData = json;
         workbook.fromJSON(json);  
         workbook.setActiveSheet("Лист1");  
     } 
@@ -31,8 +31,11 @@ $(document).ready( function() {
         });  
     }
     changeData = function() {
-        var sheet = workbook.getActiveSheet();
-        sheet.setValue(1, 1, "blalb");
+        var peopleSheet = workbook.getSheet(1);
+        peopleSheet.setValue(1, 1, "blalb");
+        var districtSheet = workbook.getSheet(2);
+        var j = districtSheet.getValue(0,0);
+        console.log(j);
     }
 
     $("#importUrl").focusout( function () {
