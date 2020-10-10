@@ -31,31 +31,48 @@ $(document).ready( function() {
         });  
     }
     createBuildingList = function () {
-        console.log("tbd");
+        var districtSheet = workbook.getSheet(2);
         let buildingList = {};
         return buildingList;
     }
     changeData = function() {
         let buildings = createBuildingList();
         var peopleSheet = workbook.getSheet(1);
-     //   peopleSheet.setValue(1, 1, "blalb");
-        var districtSheet = workbook.getSheet(2);
         var i = 1;
         var data;
-        const toponims = ["вул.", "пров.", "пр.", "м."];
-        const build = ["буд.", "б."];
+        const toponims = ["вул.", "пров.", "пр.", "м.", "провулок"];
+        const build = "буд.";
         while ((data = peopleSheet.getValue(i, 0)) != null) {
-            data = data.toLowerCase().replace(/\s/g, '').split(',');
+            data = data.toLowerCase().replace(/\s/g, '').replace(",,", ",").split(',');
             console.log(data);
+            if (data.length == 1) { //if there is only city, w/o street and flat, do not make any marks
+                i++;
+                continue; 
+            } 
+            else if (data.length > 1) { //street name parser
+                for (let i=0; i< toponims.length; i++) {
+                    data[1] = data[1].replace(toponims[i], '');
+                }
+                if (data.length > 2) { //building number parser
+                    console.log(data[2]);
+                    data[2] = data[2].replace(build, '').replace('.', '');
+                    if (data[2].includes('/')) { //if apt number is specified with /
+                        let tmp = data[2].split('/'); 
+                        data[2] = tmp[0];
+                        data.push(tmp[1]);
+                    }
+                }
+            }
+            peopleSheet.setValue(i, 1, data);
             i++;
         }
+        $('#ready').prop('disabled', false);
     }
 
     $("#importUrl").focusout( function () {
         ImportFile();
         LoadSpread();
         setTimeout(changeData, 1000);
-        $('#ready').prop('disabled', false);
     })
 
     $("#ready").click( function() {
