@@ -30,16 +30,32 @@ $(document).ready( function() {
             }  
         });  
     }
+    buildingNumber = function () {
+        listNum = {};
+
+        return listNum;
+    }
     createBuildingList = function () {
         var districtSheet = workbook.getSheet(2);
-        let buildingList = {};
+        let buildingList = [];
+        let street;
+        let i = 1;
+        while ((street = districtSheet.getValue(i, 0)) != null) {
+            var element = {};
+            element.street = street;
+            element.buildings = buildingNumber(districtSheet.getValue(i,1));
+            element.district = districtSheet.getValue(i,2);
+            buildingList.push(element);
+            i++;
+        }
+        console.log(buildingList);
         return buildingList;
     }
     changeData = function() {
-        let buildings = createBuildingList();
-        var peopleSheet = workbook.getSheet(1);
-        var i = 1;
-        var data;
+        let buildings = createBuildingList(); //create a structure with addresses belonging to a district
+      /*  var peopleSheet = workbook.getSheet(1);
+        let i = 1;
+        let data;
         const toponims = ["вул.", "пров.", "пр.", "м.", "провулок"];
         const build = "буд.";
         while ((data = peopleSheet.getValue(i, 0)) != null) {
@@ -65,7 +81,7 @@ $(document).ready( function() {
             }
             peopleSheet.setValue(i, 1, data);
             i++;
-        }
+        }*/
         $('#ready').prop('disabled', false);
     }
 
