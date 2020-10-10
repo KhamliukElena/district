@@ -30,9 +30,50 @@ $(document).ready( function() {
             }  
         });  
     }
-    buildingNumber = function () {
-        listNum = {};
-
+    isSubBuilding = function(str) {
+        let number = [];
+        let el = "";
+        for (let k=0; k<=str.length; k++) {
+            let l = parseInt(str[k]);
+            if (isNaN(l)) {
+                number.push(el);
+                l = str[k];
+                el = "";
+            }
+            el+=l;
+        }
+        return number;
+    }
+    buildingNumber = function (str) {
+        listNum = [];
+        if (str == null) {
+            listNum = null;
+        }
+        else {
+            str = str.replace(/\s/g, '').split(',');
+            for (let i = 0; i<str.length; i++) {
+                if (str[i].includes('-')) {
+                    let tmp = str[i].split('-');
+                    listNum.push(tmp[0]);
+                    number1 = isSubBuilding(tmp[0]);
+                    number2 = isSubBuilding(tmp[1]);
+                    for (let j=parseInt(number1[0])+1; j<=parseInt(number2[0]); j++) {
+                        listNum.push(j.toString());
+                    }
+                    if (number2.length == 2) {
+                        listNum.push(tmp[1]);
+                        while (number2[1].toString().charCodeAt(0) > 1040) {
+                            let code = number2[1].toString().charCodeAt(0)-1;
+                            number2[1] = String.fromCharCode(code);
+                            listNum.push(number2[0].concat(number2[1]));
+                        }
+                    }
+                }
+                else {
+                    listNum.push(str[i]);
+                }
+            }
+        }
         return listNum;
     }
     createBuildingList = function () {
@@ -48,19 +89,17 @@ $(document).ready( function() {
             buildingList.push(element);
             i++;
         }
-        console.log(buildingList);
         return buildingList;
     }
     changeData = function() {
         let buildings = createBuildingList(); //create a structure with addresses belonging to a district
-      /*  var peopleSheet = workbook.getSheet(1);
+        var peopleSheet = workbook.getSheet(1);
         let i = 1;
         let data;
         const toponims = ["вул.", "пров.", "пр.", "м.", "провулок"];
         const build = "буд.";
         while ((data = peopleSheet.getValue(i, 0)) != null) {
             data = data.toLowerCase().replace(/\s/g, '').replace(",,", ",").split(',');
-            console.log(data);
             if (data.length == 1) { //if there is only city, w/o street and flat, do not make any marks
                 i++;
                 continue; 
@@ -70,7 +109,6 @@ $(document).ready( function() {
                     data[1] = data[1].replace(toponims[i], '');
                 }
                 if (data.length > 2) { //building number parser
-                    console.log(data[2]);
                     data[2] = data[2].replace(build, '').replace('.', '');
                     if (data[2].includes('/')) { //if apt number is specified with /
                         let tmp = data[2].split('/'); 
@@ -81,7 +119,7 @@ $(document).ready( function() {
             }
             peopleSheet.setValue(i, 1, data);
             i++;
-        }*/
+        }
         $('#ready').prop('disabled', false);
     }
 
