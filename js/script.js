@@ -30,12 +30,25 @@ $(document).ready( function() {
             }  
         });  
     }
+    createBuildingList = function () {
+        console.log("tbd");
+        let buildingList = {};
+        return buildingList;
+    }
     changeData = function() {
+        let buildings = createBuildingList();
         var peopleSheet = workbook.getSheet(1);
-        peopleSheet.setValue(1, 1, "blalb");
+     //   peopleSheet.setValue(1, 1, "blalb");
         var districtSheet = workbook.getSheet(2);
-        var j = districtSheet.getValue(0,0);
-        console.log(j);
+        var i = 1;
+        var data;
+        const toponims = ["вул.", "пров.", "пр.", "м."];
+        const build = ["буд.", "б."];
+        while ((data = peopleSheet.getValue(i, 0)) != null) {
+            data = data.toLowerCase().replace(/\s/g, '').split(',');
+            console.log(data);
+            i++;
+        }
     }
 
     $("#importUrl").focusout( function () {
