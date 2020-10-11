@@ -83,7 +83,7 @@ $(document).ready( function() {
         let i = 1;
         while ((street = districtSheet.getValue(i, 0)) != null) {
             var element = {};
-            element.street = street;
+            element.street = street.toLowerCase().replace(/\s/g, '');
             element.buildings = buildingNumber(districtSheet.getValue(i,1));
             element.district = districtSheet.getValue(i,2);
             buildingList.push(element);
@@ -106,18 +106,43 @@ $(document).ready( function() {
             } 
             else if (data.length > 1) { //street name parser
                 for (let i=0; i< toponims.length; i++) {
-                    data[1] = data[1].replace(toponims[i], '');
+                    data[1] = data[1].replace(toponims[i], '').replace(/\./g, '');
                 }
                 if (data.length > 2) { //building number parser
-                    data[2] = data[2].replace(build, '').replace('.', '');
+                    data[2] = data[2].replace(build, '').replace(/\./g, '').replace(/\s/g, '').toUpperCase();
                     if (data[2].includes('/')) { //if apt number is specified with /
-                        let tmp = data[2].split('/'); 
-                        data[2] = tmp[0];
-                        data.push(tmp[1]);
+                        data[2] = data[2].split('/')[0]; 
                     }
                 }
             }
-            peopleSheet.setValue(i, 1, data);
+            let district = [];
+            for (let j = 0; j<buildings.length; j++) {
+                if (data[1] == buildings[j].street || data[1].endsWith(buildings[j].street)) {
+                    if (buildings[j].buildings == null || buildings[j].buildings.indexOf(data[2]) != -1) {
+                        district.push(buildings[j].district);
+                    }
+                    else if (data[2] != undefined && data[2] != null) {
+                        let sub = isSubBuilding(data[2]);
+                        if (sub.length > 1 && buildings[j].buildings.indexOf(sub[0]) != -1 &&
+                        buildings[j].buildings.indexOf((parseInt(sub[0])+1).toString()) != -1) {
+                                district.push(buildings[j].district);
+                        }
+                    }
+                }
+            }
+            if (district.length == 1) {
+                peopleSheet.setValue(i, 1, district[0]);
+            }
+            else if (district.length > 1) {
+                let msg = "Несколько доступных округов:"
+                for (let j=0; j<district.length; j++) {
+                    msg+=' ' + district[i];
+                }
+                peopleSheet.setValue(i, 1, msg);
+            }
+            else {
+                peopleSheet.setValue(i, 1, "Округ не найден");
+            }
             i++;
         }
         $('#ready').prop('disabled', false);
