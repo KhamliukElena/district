@@ -136,7 +136,7 @@ $(document).ready( function() {
             else if (district.length > 1) {
                 let msg = "Несколько доступных округов:"
                 for (let j=0; j<district.length; j++) {
-                    msg+=' ' + district[i];
+                    msg+=' ' + district[j];
                 }
                 peopleSheet.setValue(i, 1, msg);
             }
